@@ -23,15 +23,36 @@ export default function TransporteurDetail() {
   const [transporteur, setTransporteur] = useState(null)
   const [avis, setAvis] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     transporteursService.getById(id)
-      .then(({ data }) => { setTransporteur(data.transporteur); setAvis(data.transporteur.avis || []) })
-      .catch(() => navigate('/transporteurs'))
+      .then(({ data }) => { 
+        setTransporteur(data.transporteur); 
+        setAvis(data.transporteur.avis || []) 
+      })
+      .catch((err) => {
+        console.error('Erreur transporteur:', err)
+        setError('Transporteur non trouvé ou erreur de chargement')
+      })
       .finally(() => setLoading(false))
   }, [id])
 
   if (loading) return <div className="page-loading"><div className="spinner" /></div>
+  if (error) return (
+    <div className="page" style={{ paddingTop: '88px', paddingBottom: '64px' }}>
+      <div className="container">
+        <div className="empty-state card">
+          <div className="empty-icon">🚛</div>
+          <div className="empty-title">Transporteur non trouvé</div>
+          <div className="empty-desc">{error}</div>
+          <button onClick={() => navigate('/transporteurs')} className="btn btn-primary">
+            ← Retour aux transporteurs
+          </button>
+        </div>
+      </div>
+    </div>
+  )
   if (!transporteur) return null
 
   const { user: owner } = transporteur
