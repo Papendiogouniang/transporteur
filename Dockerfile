@@ -19,9 +19,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 RUN composer install --no-dev --optimize-autoloader
 
-# Generate app key if needed (assuming .env not committed)
-RUN php artisan key:generate
-
 EXPOSE 10000
 
 CMD php -S 0.0.0.0:10000 -t public
